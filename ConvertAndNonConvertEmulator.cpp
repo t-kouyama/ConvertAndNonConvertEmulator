@@ -58,7 +58,7 @@ int WinMainCRTStartup(void)
 	}
 
 
-	nDelay = GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("Delay"), 150, TEXT(".\\ConvertAndNonConvertEmulator.ini"));
+	nDelay = GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("Delay"), 200, TEXT(".\\ConvertAndNonConvertEmulator.ini"));
 
 	wKeyCodeLMENU = GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("NonConvertKey"), VK_LMENU, TEXT(".\\ConvertAndNonConvertEmulator.ini"));
 	inputDownLMENU[0].ki.wVk = wKeyCodeLMENU;
