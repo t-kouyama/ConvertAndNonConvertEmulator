@@ -15,12 +15,7 @@ INPUT inputDown_LKEY[1] = {
 	{INPUT_KEYBOARD, NULL, 0}
 };
 
-INPUT inputUp_LKEY[1] = {
-	{INPUT_KEYBOARD, NULL, KEYEVENTF_KEYUP}
-};
-
-INPUT inputEmulate_LKEY[3] = {
-	{INPUT_KEYBOARD, NULL, KEYEVENTF_KEYUP},
+INPUT inputEmulate_LKEY[2] = {
 	{INPUT_KEYBOARD, VK_NONCONVERT, 0},
 	{INPUT_KEYBOARD, VK_NONCONVERT, KEYEVENTF_KEYUP}
 };
@@ -33,12 +28,7 @@ INPUT inputDown_RKEY[1] = {
 	{INPUT_KEYBOARD, NULL, 0}
 };
 
-INPUT inputUp_RKEY[1] = {
-	{INPUT_KEYBOARD, NULL, KEYEVENTF_KEYUP}
-};
-
-INPUT inputEmulate_RKEY[3] = {
-	{INPUT_KEYBOARD, NULL, KEYEVENTF_KEYUP},
+INPUT inputEmulate_RKEY[2] = {
 	{INPUT_KEYBOARD, VK_CONVERT, 0},
 	{INPUT_KEYBOARD, VK_CONVERT, KEYEVENTF_KEYUP}
 };
@@ -62,16 +52,13 @@ int WinMainCRTStartup(void)
 
 	KeyCode_LKEY = GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("NonConvertKey"), VK_LMENU, TEXT(".\\ConvertAndNonConvertEmulator.ini"));
 	inputDown_LKEY[0].ki.wVk = KeyCode_LKEY;
-	inputUp_LKEY[0].ki.wVk = KeyCode_LKEY;
-	inputEmulate_LKEY[0].ki.wVk = KeyCode_LKEY;
 
 	KeyCode_RKEY = GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("ConvertKey"), VK_RMENU, TEXT(".\\ConvertAndNonConvertEmulator.ini"));
 	inputDown_RKEY[0].ki.wVk = KeyCode_RKEY;
-	inputUp_RKEY[0].ki.wVk = KeyCode_RKEY;
-	inputEmulate_RKEY[0].ki.wVk = KeyCode_RKEY;
 
 
 	SetWindowsHookEx(WH_KEYBOARD_LL, (HOOKPROC)LowLevelKeyboardProc, NULL, 0);
+
 
 	MSG msg;
 	while (GetMessage(&msg, NULL, 0, 0))
@@ -127,7 +114,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wp, LPARAM lp)
 					{
 						isDown_LKEY = FALSE;
 
-						SendInput(3, inputEmulate_LKEY, sizeof(INPUT));
+						SendInput(2, inputEmulate_LKEY, sizeof(INPUT));
 					}
 					else
 					{
@@ -155,7 +142,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wp, LPARAM lp)
 					{
 						isDown_RKEY = FALSE;
 
-						SendInput(3, inputEmulate_RKEY, sizeof(INPUT));
+						SendInput(2, inputEmulate_RKEY, sizeof(INPUT));
 					}
 					else
 					{
@@ -175,14 +162,10 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wp, LPARAM lp)
 						KillTimer(NULL, TimerID_LKEY);
 						TimerID_LKEY = 0;
 
-						SendInput(3, inputEmulate_LKEY, sizeof(INPUT));
-					}
-					else
-					{
-						SendInput(1, inputUp_LKEY, sizeof(INPUT));
-					}
+						SendInput(2, inputEmulate_LKEY, sizeof(INPUT));
 
-					return -1;
+						return -1;
+					}
 				}
 
 				if (kbs->vkCode == KeyCode_RKEY)
@@ -194,14 +177,10 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wp, LPARAM lp)
 						KillTimer(NULL, TimerID_RKEY);
 						TimerID_RKEY = 0;
 
-						SendInput(3, inputEmulate_RKEY, sizeof(INPUT));
-					}
-					else
-					{
-						SendInput(1, inputUp_RKEY, sizeof(INPUT));
-					}
+						SendInput(2, inputEmulate_RKEY, sizeof(INPUT));
 
-					return -1;
+						return -1;
+					}
 				}
 			}
 		}
