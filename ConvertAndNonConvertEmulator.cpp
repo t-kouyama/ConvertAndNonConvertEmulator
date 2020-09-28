@@ -5,11 +5,11 @@
 #include <windows.h>
 
 
-UINT nDelay;
+UINT Delay;
 
-WORD wKeyCode_LKEY;
-BOOL bDown_LKEY;
-UINT nIDTimer_LKEY;
+WORD KeyCode_LKEY;
+BOOL isDown_LKEY;
+UINT TimerID_LKEY;
 
 INPUT inputDown_LKEY[1] = {
 	{INPUT_KEYBOARD, NULL, 0}
@@ -25,9 +25,9 @@ INPUT inputEmulate_LKEY[3] = {
 	{INPUT_KEYBOARD, VK_NONCONVERT, KEYEVENTF_KEYUP}
 };
 
-WORD wKeyCode_RKEY;
-BOOL bDown_RKEY;
-UINT nIDTimer_RKEY;
+WORD KeyCode_RKEY;
+BOOL isDown_RKEY;
+UINT TimerID_RKEY;
 
 INPUT inputDown_RKEY[1] = {
 	{INPUT_KEYBOARD, NULL, 0}
@@ -58,17 +58,17 @@ int WinMainCRTStartup(void)
 	}
 
 
-	nDelay = GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("Delay"), 200, TEXT(".\\ConvertAndNonConvertEmulator.ini"));
+	Delay = GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("Delay"), 200, TEXT(".\\ConvertAndNonConvertEmulator.ini"));
 
-	wKeyCode_LKEY = GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("NonConvertKey"), VK_LMENU, TEXT(".\\ConvertAndNonConvertEmulator.ini"));
-	inputDown_LKEY[0].ki.wVk = wKeyCode_LKEY;
-	inputUp_LKEY[0].ki.wVk = wKeyCode_LKEY;
-	inputEmulate_LKEY[0].ki.wVk = wKeyCode_LKEY;
+	KeyCode_LKEY = GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("NonConvertKey"), VK_LMENU, TEXT(".\\ConvertAndNonConvertEmulator.ini"));
+	inputDown_LKEY[0].ki.wVk = KeyCode_LKEY;
+	inputUp_LKEY[0].ki.wVk = KeyCode_LKEY;
+	inputEmulate_LKEY[0].ki.wVk = KeyCode_LKEY;
 
-	wKeyCode_RKEY = GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("ConvertKey"), VK_RMENU, TEXT(".\\ConvertAndNonConvertEmulator.ini"));
-	inputDown_RKEY[0].ki.wVk = wKeyCode_RKEY;
-	inputUp_RKEY[0].ki.wVk = wKeyCode_RKEY;
-	inputEmulate_RKEY[0].ki.wVk = wKeyCode_RKEY;
+	KeyCode_RKEY = GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("ConvertKey"), VK_RMENU, TEXT(".\\ConvertAndNonConvertEmulator.ini"));
+	inputDown_RKEY[0].ki.wVk = KeyCode_RKEY;
+	inputUp_RKEY[0].ki.wVk = KeyCode_RKEY;
+	inputEmulate_RKEY[0].ki.wVk = KeyCode_RKEY;
 
 
 	SetWindowsHookEx(WH_KEYBOARD_LL, (HOOKPROC)LowLevelKeyboardProc, NULL, 0);
@@ -84,16 +84,16 @@ int WinMainCRTStartup(void)
 
 VOID CALLBACK TimerProc_LKEY(HWND hWnd, UINT uMsg, UINT nIDEvent, DWORD dwTime)
 {
-	KillTimer(NULL, nIDTimer_LKEY);
-	nIDTimer_LKEY = 0;
+	KillTimer(NULL, TimerID_LKEY);
+	TimerID_LKEY = 0;
 
 	SendInput(1, inputDown_LKEY, sizeof(INPUT));
 }
 
 VOID CALLBACK TimerProc_RKEY(HWND hWnd, UINT uMsg, UINT nIDEvent, DWORD dwTime)
 {
-	KillTimer(NULL, nIDTimer_RKEY);
-	nIDTimer_RKEY = 0;
+	KillTimer(NULL, TimerID_RKEY);
+	TimerID_RKEY = 0;
 
 	SendInput(1, inputDown_RKEY, sizeof(INPUT));
 }
@@ -107,25 +107,25 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wp, LPARAM lp)
 		{
 			if (wp == WM_KEYDOWN || wp == WM_SYSKEYDOWN)
 			{
-				if (kbs->vkCode == wKeyCode_LKEY)
+				if (kbs->vkCode == KeyCode_LKEY)
 				{
-					if (bDown_LKEY == FALSE)
+					if (isDown_LKEY == FALSE)
 					{
-						bDown_LKEY = TRUE;
+						isDown_LKEY = TRUE;
 
-						nIDTimer_LKEY = SetTimer(NULL, nIDTimer_LKEY, nDelay, (TIMERPROC)TimerProc_LKEY);
+						TimerID_LKEY = SetTimer(NULL, TimerID_LKEY, Delay, (TIMERPROC)TimerProc_LKEY);
 					}
 
-					if (nIDTimer_LKEY != 0) return -1;
+					if (TimerID_LKEY != 0) return -1;
 				}
-				else if (nIDTimer_LKEY != 0)
+				else if (TimerID_LKEY != 0)
 				{
-					KillTimer(NULL, nIDTimer_LKEY);
-					nIDTimer_LKEY = 0;
+					KillTimer(NULL, TimerID_LKEY);
+					TimerID_LKEY = 0;
 
 					if (kbs->vkCode >= 0x41 && kbs->vkCode <= 0x5A)
 					{
-						bDown_LKEY = FALSE;
+						isDown_LKEY = FALSE;
 
 						SendInput(3, inputEmulate_LKEY, sizeof(INPUT));
 					}
@@ -135,25 +135,25 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wp, LPARAM lp)
 					}
 				}
 
-				if (kbs->vkCode == wKeyCode_RKEY)
+				if (kbs->vkCode == KeyCode_RKEY)
 				{
-					if (bDown_RKEY == FALSE)
+					if (isDown_RKEY == FALSE)
 					{
-						bDown_RKEY = TRUE;
+						isDown_RKEY = TRUE;
 
-						nIDTimer_RKEY = SetTimer(NULL, nIDTimer_RKEY, nDelay, (TIMERPROC)TimerProc_RKEY);
+						TimerID_RKEY = SetTimer(NULL, TimerID_RKEY, Delay, (TIMERPROC)TimerProc_RKEY);
 					}
 
-					if (nIDTimer_RKEY != 0) return -1;
+					if (TimerID_RKEY != 0) return -1;
 				}
-				else if (nIDTimer_RKEY != 0)
+				else if (TimerID_RKEY != 0)
 				{
-					KillTimer(NULL, nIDTimer_RKEY);
-					nIDTimer_RKEY = 0;
+					KillTimer(NULL, TimerID_RKEY);
+					TimerID_RKEY = 0;
 
 					if (kbs->vkCode >= 0x41 && kbs->vkCode <= 0x5A)
 					{
-						bDown_RKEY = FALSE;
+						isDown_RKEY = FALSE;
 
 						SendInput(3, inputEmulate_RKEY, sizeof(INPUT));
 					}
@@ -166,14 +166,14 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wp, LPARAM lp)
 
 			if (wp == WM_KEYUP)
 			{
-				if (kbs->vkCode == wKeyCode_LKEY)
+				if (kbs->vkCode == KeyCode_LKEY)
 				{
-					bDown_LKEY = FALSE;
+					isDown_LKEY = FALSE;
 
-					if (nIDTimer_LKEY != 0)
+					if (TimerID_LKEY != 0)
 					{
-						KillTimer(NULL, nIDTimer_LKEY);
-						nIDTimer_LKEY = 0;
+						KillTimer(NULL, TimerID_LKEY);
+						TimerID_LKEY = 0;
 
 						SendInput(3, inputEmulate_LKEY, sizeof(INPUT));
 					}
@@ -185,14 +185,14 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wp, LPARAM lp)
 					return -1;
 				}
 
-				if (kbs->vkCode == wKeyCode_RKEY)
+				if (kbs->vkCode == KeyCode_RKEY)
 				{
-					bDown_RKEY = FALSE;
+					isDown_RKEY = FALSE;
 
-					if (nIDTimer_RKEY != 0)
+					if (TimerID_RKEY != 0)
 					{
-						KillTimer(NULL, nIDTimer_RKEY);
-						nIDTimer_RKEY = 0;
+						KillTimer(NULL, TimerID_RKEY);
+						TimerID_RKEY = 0;
 
 						SendInput(3, inputEmulate_RKEY, sizeof(INPUT));
 					}
