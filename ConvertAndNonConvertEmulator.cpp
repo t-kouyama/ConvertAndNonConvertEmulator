@@ -8,8 +8,8 @@
 UINT Delay;
 
 WORD KeyCode_LKEY;
-BOOL isDown_LKEY;
-UINT TimerID_LKEY;
+BOOLEAN isDown_LKEY;
+UINT_PTR TimerID_LKEY;
 
 INPUT inputDown_LKEY[1] = {
 	{INPUT_KEYBOARD, NULL, 0}
@@ -26,8 +26,8 @@ INPUT inputEmulate_LKEY[3] = {
 };
 
 WORD KeyCode_RKEY;
-BOOL isDown_RKEY;
-UINT TimerID_RKEY;
+BOOLEAN isDown_RKEY;
+UINT_PTR TimerID_RKEY;
 
 INPUT inputDown_RKEY[1] = {
 	{INPUT_KEYBOARD, NULL, 0}
@@ -45,8 +45,8 @@ INPUT inputEmulate_RKEY[3] = {
 
 
 LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wp, LPARAM lp);
-VOID CALLBACK TimerProc_LKEY(HWND hWnd, UINT uMsg, UINT nIDEvent, DWORD dwTime);
-VOID CALLBACK TimerProc_RKEY(HWND hWnd, UINT uMsg, UINT nIDEvent, DWORD dwTime);
+VOID CALLBACK TimerProc_LKEY(HWND hWnd, UINT uMsg, UINT_PTR nIDEvent, DWORD dwTime);
+VOID CALLBACK TimerProc_RKEY(HWND hWnd, UINT uMsg, UINT_PTR nIDEvent, DWORD dwTime);
 
 
 int WinMainCRTStartup(void)
@@ -82,7 +82,7 @@ int WinMainCRTStartup(void)
 	return 0;
 }
 
-VOID CALLBACK TimerProc_LKEY(HWND hWnd, UINT uMsg, UINT nIDEvent, DWORD dwTime)
+VOID CALLBACK TimerProc_LKEY(HWND hWnd, UINT uMsg, UINT_PTR nIDEvent, DWORD dwTime)
 {
 	KillTimer(NULL, TimerID_LKEY);
 	TimerID_LKEY = 0;
@@ -90,7 +90,7 @@ VOID CALLBACK TimerProc_LKEY(HWND hWnd, UINT uMsg, UINT nIDEvent, DWORD dwTime)
 	SendInput(1, inputDown_LKEY, sizeof(INPUT));
 }
 
-VOID CALLBACK TimerProc_RKEY(HWND hWnd, UINT uMsg, UINT nIDEvent, DWORD dwTime)
+VOID CALLBACK TimerProc_RKEY(HWND hWnd, UINT uMsg, UINT_PTR nIDEvent, DWORD dwTime)
 {
 	KillTimer(NULL, TimerID_RKEY);
 	TimerID_RKEY = 0;
