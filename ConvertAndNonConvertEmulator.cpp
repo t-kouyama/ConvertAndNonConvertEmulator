@@ -5,41 +5,40 @@
 #include <windows.h>
 
 
-// 長押しと認識されるまでの時間（ミリ秒）
-constexpr UINT DELAY = 150;
+UINT nDelay;
 
-
-
+WORD wKeyCodeLMENU;
 BOOL bDownLMENU;
 UINT nIDTimerLMENU;
 
 INPUT inputDownLMENU[1] = {
-	{INPUT_KEYBOARD, VK_LMENU, 0}
+	{INPUT_KEYBOARD, NULL, 0}
 };
 
 INPUT inputUpLMENU[1] = {
-	{INPUT_KEYBOARD, VK_LMENU, KEYEVENTF_KEYUP}
+	{INPUT_KEYBOARD, NULL, KEYEVENTF_KEYUP}
 };
 
 INPUT inputEmulateLMENU[3] = {
-	{INPUT_KEYBOARD, VK_LMENU, KEYEVENTF_KEYUP},
+	{INPUT_KEYBOARD, NULL, KEYEVENTF_KEYUP},
 	{INPUT_KEYBOARD, VK_NONCONVERT, 0},
 	{INPUT_KEYBOARD, VK_NONCONVERT, KEYEVENTF_KEYUP}
 };
 
+WORD wKeyCodeRMENU;
 BOOL bDownRMENU;
 UINT nIDTimerRMENU;
 
 INPUT inputDownRMENU[1] = {
-	{INPUT_KEYBOARD, VK_RMENU, 0}
+	{INPUT_KEYBOARD, NULL, 0}
 };
 
 INPUT inputUpRMENU[1] = {
-	{INPUT_KEYBOARD, VK_RMENU, KEYEVENTF_KEYUP}
+	{INPUT_KEYBOARD, NULL, KEYEVENTF_KEYUP}
 };
 
 INPUT inputEmulateRMENU[3] = {
-	{INPUT_KEYBOARD, VK_RMENU, KEYEVENTF_KEYUP},
+	{INPUT_KEYBOARD, NULL, KEYEVENTF_KEYUP},
 	{INPUT_KEYBOARD, VK_CONVERT, 0},
 	{INPUT_KEYBOARD, VK_CONVERT, KEYEVENTF_KEYUP}
 };
@@ -57,6 +56,19 @@ int WinMainCRTStartup(void)
 	{
 		return 0;
 	}
+
+
+	nDelay = GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("Delay"), 150, TEXT(".\\ConvertAndNonConvertEmulator.ini"));
+
+	wKeyCodeLMENU = GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("NonConvertKey"), VK_LMENU, TEXT(".\\ConvertAndNonConvertEmulator.ini"));
+	inputDownLMENU[0].ki.wVk = wKeyCodeLMENU;
+	inputUpLMENU[0].ki.wVk = wKeyCodeLMENU;
+	inputEmulateLMENU[0].ki.wVk = wKeyCodeLMENU;
+
+	wKeyCodeRMENU = GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("ConvertKey"), VK_RMENU, TEXT(".\\ConvertAndNonConvertEmulator.ini"));
+	inputDownRMENU[0].ki.wVk = wKeyCodeRMENU;
+	inputUpRMENU[0].ki.wVk = wKeyCodeRMENU;
+	inputEmulateRMENU[0].ki.wVk = wKeyCodeRMENU;
 
 
 	SetWindowsHookEx(WH_KEYBOARD_LL, (HOOKPROC)LowLevelKeyboardProc, NULL, 0);
@@ -93,15 +105,15 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wp, LPARAM lp)
 		KBDLLHOOKSTRUCT* kbs = (KBDLLHOOKSTRUCT*)lp;
 		if (!(kbs->flags & LLKHF_INJECTED))
 		{
-			if (wp == WM_SYSKEYDOWN)
+			if (wp == WM_KEYDOWN || wp == WM_SYSKEYDOWN)
 			{
-				if (kbs->vkCode == VK_LMENU)
+				if (kbs->vkCode == wKeyCodeLMENU)
 				{
 					if (bDownLMENU == FALSE)
 					{
 						bDownLMENU = TRUE;
 
-						nIDTimerLMENU = SetTimer(NULL, nIDTimerLMENU, DELAY, (TIMERPROC)TimerProcLMENU);
+						nIDTimerLMENU = SetTimer(NULL, nIDTimerLMENU, nDelay, (TIMERPROC)TimerProcLMENU);
 					}
 
 					if (nIDTimerLMENU != 0) return -1;
@@ -123,13 +135,13 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wp, LPARAM lp)
 					}
 				}
 
-				if (kbs->vkCode == VK_RMENU)
+				if (kbs->vkCode == wKeyCodeRMENU)
 				{
 					if (bDownRMENU == FALSE)
 					{
 						bDownRMENU = TRUE;
 
-						nIDTimerRMENU = SetTimer(NULL, nIDTimerRMENU, DELAY, (TIMERPROC)TimerProcRMENU);
+						nIDTimerRMENU = SetTimer(NULL, nIDTimerRMENU, nDelay, (TIMERPROC)TimerProcRMENU);
 					}
 
 					if (nIDTimerRMENU != 0) return -1;
@@ -154,7 +166,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wp, LPARAM lp)
 
 			if (wp == WM_KEYUP)
 			{
-				if (kbs->vkCode == VK_LMENU)
+				if (kbs->vkCode == wKeyCodeLMENU)
 				{
 					bDownLMENU = FALSE;
 
@@ -173,7 +185,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wp, LPARAM lp)
 					return -1;
 				}
 
-				if (kbs->vkCode == VK_RMENU)
+				if (kbs->vkCode == wKeyCodeRMENU)
 				{
 					bDownRMENU = FALSE;
 
