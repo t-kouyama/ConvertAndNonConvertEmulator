@@ -5,7 +5,7 @@
 #include <windows.h>
 
 
-UINT Delay;
+UINT LongPressDelay;
 BOOLEAN isFixHastyTyping;
 
 WORD KeyCode_LKEY;
@@ -49,7 +49,7 @@ int WinMainCRTStartup(void)
 	}
 
 
-	Delay = GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("Delay"), 200, TEXT(".\\ConvertAndNonConvertEmulator.ini"));
+	LongPressDelay = GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("LongPressDelay"), 200, TEXT(".\\ConvertAndNonConvertEmulator.ini"));
 
 	isFixHastyTyping = (GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("FixHastyTyping"), 0, TEXT(".\\ConvertAndNonConvertEmulator.ini")) == 1);
 
@@ -103,7 +103,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wp, LPARAM lp)
 					{
 						isDown_LKEY = TRUE;
 
-						TimerID_LKEY = SetTimer(NULL, TimerID_LKEY, Delay, (TIMERPROC)TimerProc_LKEY);
+						TimerID_LKEY = SetTimer(NULL, TimerID_LKEY, LongPressDelay, (TIMERPROC)TimerProc_LKEY);
 					}
 
 					if (TimerID_LKEY != 0) return -1;
@@ -131,7 +131,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wp, LPARAM lp)
 					{
 						isDown_RKEY = TRUE;
 
-						TimerID_RKEY = SetTimer(NULL, TimerID_RKEY, Delay, (TIMERPROC)TimerProc_RKEY);
+						TimerID_RKEY = SetTimer(NULL, TimerID_RKEY, LongPressDelay, (TIMERPROC)TimerProc_RKEY);
 					}
 
 					if (TimerID_RKEY != 0) return -1;
