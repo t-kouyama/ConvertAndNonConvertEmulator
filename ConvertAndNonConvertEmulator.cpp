@@ -6,6 +6,7 @@
 
 
 UINT Delay;
+BOOLEAN isFixHastyTyping;
 
 WORD KeyCode_LKEY;
 BOOLEAN isDown_LKEY;
@@ -49,6 +50,8 @@ int WinMainCRTStartup(void)
 
 
 	Delay = GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("Delay"), 200, TEXT(".\\ConvertAndNonConvertEmulator.ini"));
+
+	isFixHastyTyping = (GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("FixHastyTyping"), 0, TEXT(".\\ConvertAndNonConvertEmulator.ini")) == 1);
 
 	KeyCode_LKEY = GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("NonConvertKey"), VK_LMENU, TEXT(".\\ConvertAndNonConvertEmulator.ini"));
 	inputDown_LKEY[0].ki.wVk = KeyCode_LKEY;
@@ -110,7 +113,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wp, LPARAM lp)
 					KillTimer(NULL, TimerID_LKEY);
 					TimerID_LKEY = 0;
 
-					if (kbs->vkCode >= 0x41 && kbs->vkCode <= 0x5A)
+					if (isFixHastyTyping == TRUE && kbs->vkCode >= 0x41 && kbs->vkCode <= 0x5A)
 					{
 						isDown_LKEY = FALSE;
 
@@ -138,7 +141,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wp, LPARAM lp)
 					KillTimer(NULL, TimerID_RKEY);
 					TimerID_RKEY = 0;
 
-					if (kbs->vkCode >= 0x41 && kbs->vkCode <= 0x5A)
+					if (isFixHastyTyping == TRUE && kbs->vkCode >= 0x41 && kbs->vkCode <= 0x5A)
 					{
 						isDown_RKEY = FALSE;
 
