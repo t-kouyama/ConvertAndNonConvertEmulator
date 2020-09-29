@@ -9,8 +9,8 @@ UINT LongPressDelay;
 BOOLEAN isFixHastyTyping;
 
 WORD KeyCode_LKEY;
-BOOLEAN isDown_LKEY;
-UINT_PTR TimerID_LKEY;
+BOOLEAN isDown_LKEY = FALSE;
+UINT_PTR TimerID_LKEY = 0;
 
 INPUT inputDown_LKEY[1] = {
 	{INPUT_KEYBOARD, NULL, 0}
@@ -22,8 +22,8 @@ INPUT inputEmulate_LKEY[2] = {
 };
 
 WORD KeyCode_RKEY;
-BOOLEAN isDown_RKEY;
-UINT_PTR TimerID_RKEY;
+BOOLEAN isDown_RKEY = FALSE;
+UINT_PTR TimerID_RKEY = 0;
 
 INPUT inputDown_RKEY[1] = {
 	{INPUT_KEYBOARD, NULL, 0}
