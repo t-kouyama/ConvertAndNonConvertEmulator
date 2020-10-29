@@ -55,10 +55,13 @@ int WinMainCRTStartup(void)
 
 	KeyCode_LKEY = GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("NonConvertKey"), VK_LMENU, TEXT(".\\ConvertAndNonConvertEmulator.ini"));
 	inputDown_LKEY[0].ki.wVk = KeyCode_LKEY;
+	inputDown_LKEY[0].ki.wScan = MapVirtualKeyEx(KeyCode_LKEY, 4, GetKeyboardLayout(0));
+	if (inputDown_LKEY[0].ki.wScan > 0xE000) inputDown_LKEY[0].ki.dwFlags = KEYEVENTF_EXTENDEDKEY;
 
 	KeyCode_RKEY = GetPrivateProfileInt(TEXT("ConvertAndNonConvertEmulator"), TEXT("ConvertKey"), VK_RMENU, TEXT(".\\ConvertAndNonConvertEmulator.ini"));
 	inputDown_RKEY[0].ki.wVk = KeyCode_RKEY;
-
+	inputDown_RKEY[0].ki.wScan = MapVirtualKeyEx(KeyCode_RKEY, 4, GetKeyboardLayout(0));
+	if (inputDown_RKEY[0].ki.wScan > 0xE000) inputDown_RKEY[0].ki.dwFlags = KEYEVENTF_EXTENDEDKEY;
 
 	SetWindowsHookEx(WH_KEYBOARD_LL, (HOOKPROC)LowLevelKeyboardProc, NULL, 0);
 
