@@ -14,7 +14,7 @@ Alt などの特殊キーを無変換/変換キーとしても使えるように
 ## Usage
 
 ConvertAndNonConvertEmulator.exe を起動すると常駐し、それ以後の特殊キーの操作が置き換えられます。  
-ウィンドウやアイコンなどは一切表示されないので、動作状況の確認や終了はタスクマネージャなどから行ってください。
+ウィンドウやアイコンは一切表示されないので、動作状況の確認や終了はタスクマネージャーなどから行ってください。
 
 ConvertAndNonConvertEmulator.exe と同じフォルダの ConvertAndNonConvertEmulator.ini で次の設定ができます。
 
